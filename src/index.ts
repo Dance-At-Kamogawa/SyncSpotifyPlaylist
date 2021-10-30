@@ -1,5 +1,6 @@
 import { Paging } from "spotify-types/typings/global";
 import { PlaylistTrack } from "spotify-types/typings/playlist";
+import Env from "./env";
 
 const AUTH_BASE_URL = "https://accounts.spotify.com/api/token";
 const API_BASE_URL = "https://api.spotify.com/v1/playlists/";
@@ -30,14 +31,14 @@ export const syncSpotify = (): void => {
  * @returns
  */
 const getAcsessToken = () => {
-  const token = Utilities.base64Encode(CLIENT_ID + ":" + CLIENT_SECRET);
+  const token = Utilities.base64Encode(Env.CLIENT_ID + ":" + Env.CLIENT_SECRET);
   const options: GoogleAppsScript.URL_Fetch.URLFetchRequestOptions = {
     method: "post",
     headers: {
       Authorization: "Basic " + token,
     },
     payload: {
-      refresh_token: REFRESH_TOKEN,
+      refresh_token: Env.REFRESH_TOKEN,
       grant_type: "refresh_token",
     },
   };
@@ -58,7 +59,7 @@ const getAcsessToken = () => {
 const fetchSourcePlaylist = () => {
   // プレイリストの情報を取得
   const fetchApiUrl =
-    API_BASE_URL + SOURCE_PLAYLIST_ID + "/tracks?limit=" + COUNT_OF_TRACKS;
+    API_BASE_URL + Env.SOURCE_PLAYLIST_ID + "/tracks?limit=" + COUNT_OF_TRACKS;
 
   const playlist = requestHttp(fetchApiUrl) as Paging<PlaylistTrack>;
 
@@ -71,7 +72,7 @@ const fetchSourcePlaylist = () => {
 const clearTargetPlaylist = () => {
   // プレイリストの情報を取得
   const fetchApiUrl =
-    API_BASE_URL + TARGET_PLAYLIST_ID + "/tracks?limit=" + COUNT_OF_TRACKS;
+    API_BASE_URL + Env.TARGET_PLAYLIST_ID + "/tracks?limit=" + COUNT_OF_TRACKS;
 
   const playlist = requestHttp(fetchApiUrl) as Paging<PlaylistTrack>;
 
@@ -83,7 +84,7 @@ const clearTargetPlaylist = () => {
     }),
   };
 
-  const clearApiUrl = API_BASE_URL + TARGET_PLAYLIST_ID + "/tracks";
+  const clearApiUrl = API_BASE_URL + Env.TARGET_PLAYLIST_ID + "/tracks";
 
   const options: GoogleAppsScript.URL_Fetch.URLFetchRequestOptions = {
     method: "delete",
@@ -98,7 +99,7 @@ const clearTargetPlaylist = () => {
  * @param playlist プレイリスト
  */
 const updateTargetPlaylist = (playlist: Paging<PlaylistTrack>) => {
-  const updateApiUrl = API_BASE_URL + TARGET_PLAYLIST_ID + "/tracks";
+  const updateApiUrl = API_BASE_URL + Env.TARGET_PLAYLIST_ID + "/tracks";
 
   const tracks = {
     uris: playlist.items.map((el) => {
